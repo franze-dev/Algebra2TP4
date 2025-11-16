@@ -61,6 +61,7 @@ public class GraphMethods
     /// <summary>
     /// Determines whether a sequence contains a specified element by using a specified IEqualityComparer<T>.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.contains?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -79,6 +80,7 @@ public class GraphMethods
     /// <summary>
     /// Returns distinct elements from a sequence by using the default equality comparer to compare values.
     /// Time: O(n); Memory: O(n)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.distinct?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -115,6 +117,7 @@ public class GraphMethods
     /// <summary>
     /// Returns the element at a specified index in a sequence.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.elementat?view=net-9.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -122,7 +125,7 @@ public class GraphMethods
     /// <returns></returns>
     public static TSource ElementAt<TSource>(IEnumerable<TSource> source, int index)
     {
-        if (index < 0 || index >= source.Count())
+        if (index < 0)
             throw new ArgumentOutOfRangeException(nameof(index));
 
         int i = 0;
@@ -181,6 +184,7 @@ public class GraphMethods
     /// <summary>
     /// Returns the first element in a sequence that satisfies a specified condition.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.first?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -199,6 +203,7 @@ public class GraphMethods
     /// <summary>
     /// Returns the last element of a sequence that satisfies a specified condition.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.last?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -206,17 +211,23 @@ public class GraphMethods
     /// <returns></returns>
     public static TSource Last<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
-        for (int item = source.Count() - 1; item >= 0; item--)
+        TSource last = default;
+        bool found = false;
+        foreach (var item in source)
         {
-            if (predicate(source.ElementAt(item)))
-                return source.ElementAt(item);
+            if (predicate(item))
+            {
+                last = item;
+                found = true;
+            }
         }
 
-        return default(TSource);
+        return found ? last : default;
     }
     /// <summary>
     /// Produces the set intersection of two sequences by using the default equality comparer to compare values.
     /// Time: O(n + m); Memory: O(m + k)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.intersect?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -256,6 +267,7 @@ public class GraphMethods
     /// <summary>
     /// Returns a number that represents how many elements in the specified sequence satisfy a condition.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.count?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -276,6 +288,7 @@ public class GraphMethods
     /// <summary>
     /// Determines whether two sequences are equal by comparing their elements by using a specified IEqualityComparer<T>.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.sequenceequal?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -305,6 +318,7 @@ public class GraphMethods
     /// <summary>
     /// Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.single?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -332,6 +346,7 @@ public class GraphMethods
     /// <summary>
     /// Bypasses elements in a sequence as long as a specified condition is true and then returns the remaining elements.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.skipwhile?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -353,6 +368,7 @@ public class GraphMethods
     /// <summary>
     /// Produces the set union of two sequences by using the default equality comparer.
     /// Time: O(n + m); Memory: O(n + m)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.union?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -402,6 +418,7 @@ public class GraphMethods
     /// <summary>
     /// Filters a sequence of values based on a predicate. Each element's index is used in the logic of the predicate function.
     /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.where?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
