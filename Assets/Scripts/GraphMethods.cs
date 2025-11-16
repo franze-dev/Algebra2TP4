@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class GraphMethods
 {
     /// <summary>
     /// Determines whether all elements of a sequence satisfy a condition.
+    /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.all?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -23,6 +24,8 @@ public class GraphMethods
     }
     /// <summary>
     /// Determines whether any element of a sequence satisfies a condition.
+    /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.any?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -39,6 +42,8 @@ public class GraphMethods
     }
     /// <summary>
     /// Determines whether a sequence contains a specified element by using the default equality comparer.
+    /// Time: O(n); Memory: O(1)
+    /// https://learn.microsoft.com/es-es/dotnet/api/system.linq.enumerable.contains?view=net-8.0
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -55,6 +60,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Determines whether a sequence contains a specified element by using a specified IEqualityComparer<T>.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -72,6 +78,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Returns distinct elements from a sequence by using the default equality comparer to compare values.
+    /// Time: O(n); Memory: O(n)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -88,6 +95,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Returns distinct elements from a sequence by using a specified IEqualityComparer<T> to compare values.
+    /// Time: O(n); Memory: O(n)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -106,6 +114,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Returns the element at a specified index in a sequence.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -129,6 +138,9 @@ public class GraphMethods
     }
     /// <summary>
     /// Produces the set difference of two sequences by using the default equality comparer to compare values.
+    /// Time: O(n + m) (n = source1.Count(), m = source2.Count())
+    /// Memory: O(n + m)
+    /// https://stackoverflow.com/questions/25247854/what-is-the-time-complexity-performance-of-hashset-contains-in-java
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -136,16 +148,19 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Except<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2)
     {
+        HashSet<TSource> other = new(source2, EqualityComparer<TSource>.Default);
         HashSet<TSource> distinct = new();
 
         foreach (var item in source1)
         {
-            if (!source2.Contains(item) && distinct.Add(item))
+            if (!other.Contains(item) && distinct.Add(item))
                 yield return item;
         }
     }
     /// <summary>
     /// Produces the set difference of two sequences by using the specified IEqualityComparer<T> to compare values.
+    /// Time: O(n + m) (n = source1.Count(), m = source2.Count())
+    /// Memory: O(n + m)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -154,16 +169,18 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Except<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
     {
+        HashSet<TSource> other = new(source2, comparer);
         HashSet<TSource> distinct = new(comparer);
 
         foreach (var item in source1)
         {
-            if (!source2.Contains(item) && distinct.Add(item))
+            if (!other.Contains(item) && distinct.Add(item))
                 yield return item;
         }
     }
     /// <summary>
     /// Returns the first element in a sequence that satisfies a specified condition.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -181,6 +198,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Returns the last element of a sequence that satisfies a specified condition.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -198,6 +216,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Produces the set intersection of two sequences by using the default equality comparer to compare values.
+    /// Time: O(n + m); Memory: O(m + k)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -205,15 +224,18 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Intersect<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2)
     {
+        HashSet<TSource> other = new(source2, EqualityComparer<TSource>.Default);
         HashSet<TSource> distinct = new();
 
         foreach (var item in source1)
-            foreach (var item2 in source2)
-                if (distinct.Add(item2) && item2.Equals(item))
-                    yield return item2;
+        {
+            if (distinct.Add(item) && other.Contains(item))
+                yield return item;
+        }
     }
     /// <summary>
     /// Produces the set intersection of two sequences by using the specified IEqualityComparer<T> to compare values.
+    /// Time: O(n + m); Memory: O(m + k)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -222,15 +244,18 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Intersect<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
     {
+        HashSet<TSource> other = new(source2, comparer);
         HashSet<TSource> distinct = new(comparer);
 
         foreach (var item in source1)
-            foreach (var item2 in source2)
-                if (distinct.Add(item2) && item2.Equals(item))
-                    yield return item2;
+        {
+            if (distinct.Add(item) && other.Contains(item))
+                yield return item;
+        }
     }
     /// <summary>
     /// Returns a number that represents how many elements in the specified sequence satisfy a condition.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -250,6 +275,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Determines whether two sequences are equal by comparing their elements by using a specified IEqualityComparer<T>.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -258,19 +284,27 @@ public class GraphMethods
     /// <returns></returns>
     public static bool SequenceEqual<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
     {
-        if (source1.Count() != source2.Count())
-            return false;
+        using var enumerator1 = source1.GetEnumerator();
+        using var enumerator2 = source2.GetEnumerator();
 
-        for (int i = 0; i < source1.Count(); i++)
+        while (true)
         {
-            if (!source1.ElementAt(i).Equals(source2.ElementAt(i)))
+            bool next1 = enumerator1.MoveNext();
+            bool next2 = enumerator2.MoveNext();
+
+            if (!next1 && !next2)
+                return true;
+
+            if (next1 != next2)
+                return false;
+
+            if (!comparer.Equals(enumerator1.Current, enumerator2.Current))
                 return false;
         }
-
-        return true;
     }
     /// <summary>
     /// Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -279,15 +313,17 @@ public class GraphMethods
     public static TSource Single<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
         TSource result = default(TSource);
+        bool found = false;
 
         foreach (var item in source)
         {
             if (predicate(item))
             {
-                if (!result.Equals(default(TSource)))
+                if (found)
                     throw new Exception("More than one element satisfies the condition");
 
                 result = item;
+                found = true;
             }
         }
 
@@ -295,6 +331,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Bypasses elements in a sequence as long as a specified condition is true and then returns the remaining elements.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -307,14 +344,15 @@ public class GraphMethods
         foreach (var item in source)
         {
             if (predicate(item) && skip)
-                skip = false;
+                continue;
 
-            if (!skip)
-                yield return item;
+            skip = false;
+            yield return item;
         }
     }
     /// <summary>
     /// Produces the set union of two sequences by using the default equality comparer.
+    /// Time: O(n + m); Memory: O(n + m)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -322,18 +360,15 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Union<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2)
     {
-        var distinct1 = Distinct(source1);
-        var distinct2 = Distinct(source2);
-
         HashSet<TSource> distinct = new();
 
-        foreach (var item in distinct1)
+        foreach (var item in Distinct(source1))
         {
             if (distinct.Add(item))
                 yield return item;
         }
 
-        foreach (var item in distinct2)
+        foreach (var item in Distinct(source2))
         {
             if (distinct.Add(item))
                 yield return item;
@@ -341,6 +376,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Produces the set union of two sequences by using a specified IEqualityComparer<T>.
+    /// Time: O(n + m); Memory: O(n + m)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source1"></param>
@@ -349,18 +385,15 @@ public class GraphMethods
     /// <returns></returns>
     public static IEnumerable<TSource> Union<TSource>(IEnumerable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
     {
-        var distinct1 = Distinct(source1);
-        var distinct2 = Distinct(source2);
-
         HashSet<TSource> distinct = new(comparer);
 
-        foreach (var item in distinct1)
+        foreach (var item in Distinct(source1))
         {
             if (distinct.Add(item))
                 yield return item;
         }
 
-        foreach (var item in distinct2)
+        foreach (var item in Distinct(source2))
         {
             if (distinct.Add(item))
                 yield return item;
@@ -368,6 +401,7 @@ public class GraphMethods
     }
     /// <summary>
     /// Filters a sequence of values based on a predicate. Each element's index is used in the logic of the predicate function.
+    /// Time: O(n); Memory: O(1)
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
